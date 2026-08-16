@@ -513,21 +513,21 @@ export function FoamExperience() {
           root, the nav's z-40 wins over every z-10 section. */}
       <nav
         ref={navRef}
-        className="site-nav fixed inset-x-0 top-0 z-40 px-5 py-3 text-[0.78rem] leading-none font-semibold tracking-[0.22em] text-[#004818] uppercase opacity-0 sm:px-10 md:py-3.5"
+        className="site-nav fixed inset-x-0 top-0 z-40 px-5 text-[0.78rem] leading-none font-semibold tracking-[0.22em] text-[#004818] uppercase opacity-0 sm:px-10"
       >
-        <div className="flex items-center justify-between gap-4">
-          <a href="#top" aria-label="RoCo Spray Foam Insulation — home" className="flex shrink-0 items-center">
-            {/* Small static logo, faded in by CSS once data-scrolled is set. */}
+        <div className="flex h-14 items-center justify-between gap-4">
+          <a href="#top" aria-label="RoCo Spray Foam Insulation — home" className="flex h-9 shrink-0 items-center">
             <Image
-              src="/brand/roco-logo.webp"
+              src="/brand/roco-logo-mark.png"
               alt="RoCo Spray Foam Insulation"
-              width={1500}
-              height={725}
-              className="nav-logo block h-9 w-auto md:h-12 lg:h-14"
+              width={1424}
+              height={560}
+              unoptimized
+              className="nav-logo block h-9 w-auto max-h-9 object-contain"
             />
           </a>
 
-          <div className="hidden flex-1 items-center justify-end gap-x-5 md:flex lg:gap-x-7">
+          <div className="hidden h-full flex-1 items-center justify-end gap-x-5 md:flex lg:gap-x-7">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.id}
@@ -540,7 +540,7 @@ export function FoamExperience() {
             ))}
             <a
               href={QUOTE_HREF}
-              className="inline-flex h-10 items-center whitespace-nowrap rounded-sm bg-[#005828] px-4 tracking-[0.18em] text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#004818] hover:shadow-md"
+              className="inline-flex h-8 items-center whitespace-nowrap rounded-sm bg-[#005828] px-3 tracking-[0.18em] text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#004818] hover:shadow-md"
             >
               Request a quote
             </a>
@@ -562,15 +562,20 @@ export function FoamExperience() {
           </button>
         </div>
 
-        <div id="mobile-nav-menu" className="nav-mobile-menu md:hidden" data-open={mobileOpen}>
-          <div className="flex flex-col items-center gap-1 pt-2 pb-6">
+        <div
+          id="mobile-nav-menu"
+          className="nav-mobile-menu md:hidden"
+          data-open={mobileOpen}
+          hidden={!mobileOpen}
+        >
+          <div className="flex flex-col items-center gap-1 pt-3 pb-8">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.id}
                 href={link.href}
                 data-nav-id={link.id}
                 onClick={() => setMobileOpen(false)}
-                className="nav-link nav-link-mobile w-full py-3 text-center"
+                className="nav-link nav-link-mobile text-center"
               >
                 {link.label}
               </a>
@@ -578,7 +583,7 @@ export function FoamExperience() {
             <a
               href={QUOTE_HREF}
               onClick={() => setMobileOpen(false)}
-              className="mt-3 w-full rounded-sm bg-[#005828] px-4 py-3 text-center tracking-[0.18em] text-white shadow-sm transition hover:bg-[#004818]"
+              className="mt-4 inline-flex items-center justify-center rounded-sm bg-[#005828] px-6 py-3.5 text-center tracking-[0.18em] text-white shadow-sm transition hover:bg-[#004818]"
             >
               Request a quote
             </a>
@@ -687,27 +692,25 @@ export function FoamExperience() {
 
       <section
         id="concrete"
-        className="concrete-parallax relative z-10 flex min-h-[55vh] scroll-mt-24 flex-col justify-center px-6 py-20 sm:px-10"
+        className="concrete-parallax relative z-10 flex min-h-[62vh] scroll-mt-24 flex-col justify-center px-6 py-20 sm:px-10 sm:py-28"
       >
         {/* Dark wash — just enough for text legibility over the jobsite photo. */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#1a1a17]/55 via-[#1a1a17]/40 to-[#1a1a17]/60" />
         <div className="relative z-10 mx-auto max-w-3xl text-center">
-          <h2 className="font-eurostile-black text-5xl tracking-[0.04em] text-[#f4f1ea] uppercase sm:text-6xl lg:text-7xl">
-            Concrete & Masonry
+          <h2 className="on-foam text-4xl tracking-[0.04em] text-[#f4f1ea] uppercase sm:text-5xl">
+            <span className="font-eurostile-black block">Concrete & Masonry</span>
+            <span className="font-eurostile mt-1 block">Poured Right. Built Solid.</span>
           </h2>
-          <p className="font-eurostile mt-3 text-2xl tracking-[0.08em] text-[#a2c88f] uppercase sm:text-3xl">
-            Poured Right. Built Solid.
-          </p>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-[#e6ecdd]">
+          <p className="on-foam mx-auto mt-4 max-w-2xl text-base font-medium leading-relaxed text-[#f4f1ea]">
             From slabs and foundations to block, brick, and stone, we build it to last and finish it right.
           </p>
         </div>
       </section>
 
-      {/* Service cards live in their own solid-color section below the
-          photo rather than sitting on top of it, so the block wall reads
-          clearly and the photo section keeps its own breathing room. */}
-      <section className="relative z-10 bg-[#3a3a36] px-6 py-20 sm:px-10">
+      {/* Service cards live in their own textured section below the photo
+          rather than sitting on top of it, so the block wall reads clearly
+          and the photo section keeps its own breathing room. */}
+      <section className="concrete-services-bg relative z-10 px-6 py-20 sm:px-10">
         <div className="mx-auto max-w-5xl">
           {/* CMU block wall: two courses of three, stacked like block on a
               jobsite. Placement, mortar joints, and textured faces live in
@@ -747,21 +750,21 @@ export function FoamExperience() {
 
       <section
         id="contact"
-        className="masonry-parallax relative z-10 flex min-h-[55vh] scroll-mt-24 flex-col justify-center px-6 py-20 text-center sm:px-10"
+        className="masonry-parallax relative z-10 flex min-h-[62vh] scroll-mt-24 flex-col justify-center px-6 py-20 text-center sm:px-10 sm:py-28"
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-[#004818]/55 via-[#003117]/40 to-[#00250f]/58" />
-        <div className="relative z-10">
-          <h2 className="on-foam font-eurostile text-3xl tracking-[0.06em] text-[#f4f1ea] uppercase sm:text-4xl">
-            Ready to Get Started?
-          </h2>
-          <p className="on-foam mx-auto mt-4 max-w-xl text-sm leading-relaxed text-[#e6ecdd]">
-            Tell us about your project and we&apos;ll help you figure out the right solution.
-          </p>
-          <p className="on-foam mt-4 text-[0.82rem] font-semibold tracking-[0.28em] text-[#a2c88f] uppercase">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#004818]/22 via-[#003117]/12 to-[#00250f]/28" />
+        <div className="relative z-10 mx-auto max-w-3xl">
+          <p className="on-foam text-[0.78rem] font-semibold tracking-[0.28em] text-[#f4f1ea] uppercase">
             Serving Central Minnesota |{" "}
             <a href="tel:3208088500" className="underline-offset-4 hover:underline">
               320.808.8500
             </a>
+          </p>
+          <h2 className="on-foam mt-3 text-4xl tracking-[0.04em] text-[#f4f1ea] uppercase sm:text-5xl">
+            <span className="font-eurostile-black block">Ready to Get Started?</span>
+          </h2>
+          <p className="on-foam mx-auto mt-4 max-w-2xl text-base font-medium leading-relaxed text-[#f4f1ea]">
+            Tell us about your project and we&apos;ll help you figure out the right solution.
           </p>
           <a
             href={QUOTE_HREF}

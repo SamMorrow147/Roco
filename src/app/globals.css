@@ -118,12 +118,17 @@ html {
 }
 
 .site-nav[data-scrolled="true"] {
-  background-color: rgba(244, 241, 234, 0.94);
+  /* Fully opaque — a translucent bar let dark section photos/text ghost
+     through behind the nav links, which read as a rendering glitch. */
+  background-color: #f4f1ea;
   box-shadow: 0 8px 28px rgba(0, 40, 16, 0.1);
 }
 
-/* Small nav logo: hidden until the nav picks up its scrolled background,
-   then fades in with it — no scroll-position transform math needed. */
+/* Nav row height is fixed (see the `h-14` on the row div in JSX) so the
+   logo, links, and button all share one centerline regardless of each
+   element's own intrinsic size. The logo's own height is set inline on
+   the element (not here) so no later rule can override it and throw off
+   the centering — this class only handles the scroll-triggered fade. */
 .nav-logo {
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -138,7 +143,7 @@ html {
   position: relative;
   display: inline-flex;
   align-items: center;
-  height: 2.5rem;
+  height: 2rem;
   transition: color 0.2s ease;
 }
 
@@ -151,7 +156,7 @@ html {
   position: absolute;
   left: 0;
   right: 100%;
-  bottom: 0.55rem;
+  bottom: 0.28rem;
   height: 2px;
   background: #005828;
   transition: right 0.25s ease;
@@ -219,26 +224,14 @@ html {
   transform: rotate(-45deg);
 }
 
-/* Mobile dropdown panel: collapsed to zero height by default, and animated
-   open via grid-template-rows (rather than max-height) so it sizes exactly
-   to its content with no arbitrary ceiling. */
+/* Closed menu uses the HTML `hidden` attribute (display: none) so it
+   cannot leave a tall empty band under the logo + hamburger. */
 .nav-mobile-menu {
-  display: grid;
-  grid-template-rows: 0fr;
-  opacity: 0;
-  transition:
-    grid-template-rows 0.3s ease,
-    opacity 0.25s ease;
-}
-
-.nav-mobile-menu > div {
-  overflow: hidden;
-  min-height: 0;
+  display: none;
 }
 
 .nav-mobile-menu[data-open="true"] {
-  grid-template-rows: 1fr;
-  opacity: 1;
+  display: block;
 }
 
 /* Before the nav has picked up its scrolled background, the dropdown needs
@@ -255,13 +248,15 @@ html {
 
 .nav-link-mobile {
   height: auto;
+  width: fit-content;
   justify-content: center;
-  font-size: 0.85rem;
-  border-bottom: 1px solid rgba(0, 72, 24, 0.1);
+  padding-block: 0.95rem;
+  font-size: 0.9rem;
+  line-height: 1.2;
 }
 
-.nav-link-mobile:last-of-type {
-  border-bottom: none;
+.nav-link-mobile::after {
+  bottom: 0.55rem;
 }
 
 /* Parallax sections (foam values + concrete & masonry): each photo is a
@@ -312,6 +307,15 @@ html {
   z-index: -1;
   background: #3a3a36 url("/Images/concrete-bg.webp") center / cover no-repeat;
   pointer-events: none;
+}
+
+/* Concrete services block section: same tan-gray as before, but with the
+   cast concrete photo tiled in as a subtle texture behind the block wall. */
+.concrete-services-bg {
+  background-color: #a5a7aa;
+  background-image: url("/Images/concrete-texture.png");
+  background-repeat: repeat;
+  background-size: 480px 480px;
 }
 
 .masonry-parallax {
