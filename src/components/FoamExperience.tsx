@@ -44,7 +44,7 @@ const VALUE_PROPS = [
     icon: "spray" as const,
   },
   {
-    title: "The Right Solution for the Job",
+    title: "The Right Solution\nfor the Job",
     body: "Every project starts with a look at the actual space. We assess the building, understand what you're trying to accomplish, and recommend the right approach for the job.",
     icon: "assessment" as const,
   },
@@ -608,25 +608,25 @@ export function FoamExperience() {
             </div>
           </div>
 
-          <div ref={copyRef} className="mt-8 max-w-xl opacity-0">
+          <div ref={copyRef} className="mt-5 flex max-w-xl flex-col items-center gap-5 opacity-0 sm:mt-8 sm:gap-4">
             <p className="font-eurostile-black text-3xl tracking-[0.08em] text-[#005828] uppercase sm:text-4xl">
               We Do It Right.
             </p>
-            <p className="mt-4 text-xl text-[#004818] sm:text-2xl">
-              <span className="font-eurostile-black block">Built for Minnesota.</span>
-              <span className="font-eurostile mt-1 block">Insulated for every season.</span>
+            <p className="flex flex-col gap-2 text-xl text-[#004818] sm:text-2xl">
+              <span className="font-eurostile-black">Built for Minnesota.</span>
+              <span className="font-eurostile">Insulated for every season.</span>
             </p>
-            <p className="mt-4 text-[0.82rem] font-semibold tracking-[0.28em] text-[#004818] uppercase">
+            <p className="text-[0.82rem] font-semibold leading-7 tracking-[0.22em] text-[#004818] uppercase">
               Spray Foam. Concrete. Masonry.
             </p>
-            <p className="mt-4 text-[0.9rem] font-semibold tracking-[0.22em] text-[#004818] uppercase">
+            <p className="text-[0.9rem] font-semibold tracking-[0.22em] text-[#004818] uppercase">
               <a href="tel:3208088500" className="underline-offset-4 hover:underline">
                 320.808.8500
               </a>
             </p>
             <a
               href={QUOTE_HREF}
-              className="mt-6 inline-block rounded-sm bg-[#005828] px-6 py-3 text-[0.8rem] font-semibold tracking-[0.2em] text-white uppercase shadow-sm transition hover:-translate-y-0.5 hover:bg-[#004818] hover:shadow-md"
+              className="inline-block rounded-sm bg-[#005828] px-6 py-3 text-[0.8rem] font-semibold tracking-[0.2em] text-white uppercase shadow-sm transition hover:-translate-y-0.5 hover:bg-[#004818] hover:shadow-md"
             >
               Request a quote
             </a>
@@ -678,7 +678,7 @@ export function FoamExperience() {
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-[#a2c88f]/50 bg-[#a2c88f]/15 text-white">
                   <ValuePropIcon icon={prop.icon} />
                 </div>
-                <h3 className="font-eurostile mt-5 text-center text-xl tracking-[0.06em] text-white uppercase sm:text-left">
+                <h3 className="font-eurostile mt-5 text-center text-xl tracking-[0.06em] whitespace-pre-line text-white uppercase sm:text-left">
                   {prop.title}
                 </h3>
                 <p className="mt-3 text-[0.95rem] font-medium leading-relaxed text-[#f4f1ea]">
