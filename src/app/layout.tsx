@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat, Oswald } from "next/font/google";
 import localFont from "next/font/local";
+import Script from "next/script";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -79,6 +80,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           fetchPriority="low"
         />
         {children}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-50SLH1VT6T"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-50SLH1VT6T');
+          `}
+        </Script>
       </body>
     </html>
   );

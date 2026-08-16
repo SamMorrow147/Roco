@@ -1,6 +1,7 @@
 "use client";
 
 import { foamProgress, markIntroDone } from "@/lib/foamProgress";
+import { QUOTE_HREF } from "@/lib/site";
 import gsap from "gsap";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -10,9 +11,6 @@ const FoamCanvas = dynamic(
   () => import("./FoamCanvas").then((mod) => mod.FoamCanvas),
   { ssr: false },
 );
-
-const QUOTE_HREF =
-  "mailto:rocofoam@gmail.com?subject=Requesting Quote From RoCo Spray Foam Insulation";
 
 const SOCIAL_LINKS = [
   {
@@ -609,9 +607,6 @@ export function FoamExperience() {
           </div>
 
           <div ref={copyRef} className="mt-5 flex max-w-xl flex-col items-center gap-5 opacity-0 sm:mt-8 sm:gap-4">
-            <p className="font-eurostile-black text-3xl tracking-[0.08em] text-[#005828] uppercase sm:text-4xl">
-              We Do It Right.
-            </p>
             <p className="flex flex-col gap-2 text-xl text-[#004818] sm:text-2xl">
               <span className="font-eurostile-black">Built for Minnesota.</span>
               <span className="font-eurostile">Insulated for every season.</span>
