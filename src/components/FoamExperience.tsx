@@ -513,17 +513,17 @@ export function FoamExperience() {
           root, the nav's z-40 wins over every z-10 section. */}
       <nav
         ref={navRef}
-        className="site-nav fixed inset-x-0 top-0 z-40 px-5 py-4 text-[0.78rem] font-semibold tracking-[0.22em] text-[#004818] uppercase opacity-0 sm:px-10"
+        className="site-nav fixed inset-x-0 top-0 z-40 px-5 py-3 text-[0.78rem] leading-none font-semibold tracking-[0.22em] text-[#004818] uppercase opacity-0 sm:px-10 md:py-3.5"
       >
         <div className="flex items-center justify-between gap-4">
-          <a href="#top" aria-label="RoCo Spray Foam Insulation — home" className="shrink-0">
+          <a href="#top" aria-label="RoCo Spray Foam Insulation — home" className="flex shrink-0 items-center">
             {/* Small static logo, faded in by CSS once data-scrolled is set. */}
             <Image
               src="/brand/roco-logo.webp"
               alt="RoCo Spray Foam Insulation"
               width={1500}
               height={725}
-              className="nav-logo h-8 w-auto sm:h-9"
+              className="nav-logo block h-9 w-auto md:h-12 lg:h-14"
             />
           </a>
 
@@ -540,7 +540,7 @@ export function FoamExperience() {
             ))}
             <a
               href={QUOTE_HREF}
-              className="whitespace-nowrap rounded-sm bg-[#005828] px-4 py-2 tracking-[0.18em] text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#004818] hover:shadow-md"
+              className="inline-flex h-10 items-center whitespace-nowrap rounded-sm bg-[#005828] px-4 tracking-[0.18em] text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#004818] hover:shadow-md"
             >
               Request a quote
             </a>
@@ -632,8 +632,18 @@ export function FoamExperience() {
 
       <section
         id="values"
-        className="foam-values relative z-10 flex min-h-[62vh] scroll-mt-20 flex-col justify-center px-6 py-20 sm:px-10 sm:py-28"
+        className="foam-values relative z-10 flex min-h-[62vh] scroll-mt-24 flex-col justify-center px-6 py-20 sm:px-10 sm:py-28"
       >
+        {/* Logo mint, sitting on top of the photo wash so the join reads as
+            a stroke rather than a seam. */}
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 z-20 h-[3px] bg-[#a2c88f]"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[3px] bg-[#a2c88f]"
+          aria-hidden
+        />
         {/* Light wash — the photo stays visible; type uses a letter halo. */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#00180a]/40 via-[#00250f]/22 to-[#00180a]/42" />
         <div className="relative z-10 mx-auto max-w-3xl text-center">
@@ -678,7 +688,7 @@ export function FoamExperience() {
 
       <section
         id="concrete"
-        className="concrete-parallax relative z-10 flex min-h-[55vh] scroll-mt-20 flex-col justify-center px-6 py-20 sm:px-10"
+        className="concrete-parallax relative z-10 flex min-h-[55vh] scroll-mt-24 flex-col justify-center px-6 py-20 sm:px-10"
       >
         {/* Dark wash — just enough for text legibility over the jobsite photo. */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#1a1a17]/55 via-[#1a1a17]/40 to-[#1a1a17]/60" />
@@ -738,26 +748,29 @@ export function FoamExperience() {
 
       <section
         id="contact"
-        className="relative z-10 scroll-mt-20 bg-[#004818] px-6 py-20 text-center sm:px-10"
+        className="masonry-parallax relative z-10 flex min-h-[55vh] scroll-mt-24 flex-col justify-center px-6 py-20 text-center sm:px-10"
       >
-        <h2 className="font-eurostile text-3xl tracking-[0.06em] text-[#f4f1ea] uppercase">
-          Ready to Get Started?
-        </h2>
-        <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-[#e6ecdd]">
-          Tell us about your project and we&apos;ll help you figure out the right solution.
-        </p>
-        <p className="mt-4 text-[0.82rem] font-semibold tracking-[0.28em] text-[#a2c88f] uppercase">
-          Serving Central Minnesota |{" "}
-          <a href="tel:3208088500" className="underline-offset-4 hover:underline">
-            320.808.8500
+        <div className="absolute inset-0 bg-gradient-to-b from-[#004818]/55 via-[#003117]/40 to-[#00250f]/58" />
+        <div className="relative z-10">
+          <h2 className="on-foam font-eurostile text-3xl tracking-[0.06em] text-[#f4f1ea] uppercase sm:text-4xl">
+            Ready to Get Started?
+          </h2>
+          <p className="on-foam mx-auto mt-4 max-w-xl text-sm leading-relaxed text-[#e6ecdd]">
+            Tell us about your project and we&apos;ll help you figure out the right solution.
+          </p>
+          <p className="on-foam mt-4 text-[0.82rem] font-semibold tracking-[0.28em] text-[#a2c88f] uppercase">
+            Serving Central Minnesota |{" "}
+            <a href="tel:3208088500" className="underline-offset-4 hover:underline">
+              320.808.8500
+            </a>
+          </p>
+          <a
+            href={QUOTE_HREF}
+            className="mt-8 inline-block rounded-sm bg-white px-6 py-3 text-[0.8rem] font-semibold tracking-[0.2em] text-[#005828] uppercase shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+          >
+            Request a quote
           </a>
-        </p>
-        <a
-          href={QUOTE_HREF}
-          className="mt-8 inline-block rounded-sm bg-white px-6 py-3 text-[0.8rem] font-semibold tracking-[0.2em] text-[#005828] uppercase shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-        >
-          Request a quote
-        </a>
+        </div>
       </section>
 
       <footer className="relative z-10 bg-[#f4f1ea] px-6 py-14 text-center sm:px-10">

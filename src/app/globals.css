@@ -136,7 +136,9 @@ html {
 /* Nav links: animated underline sweep on hover. */
 .nav-link {
   position: relative;
-  padding-bottom: 2px;
+  display: inline-flex;
+  align-items: center;
+  height: 2.5rem;
   transition: color 0.2s ease;
 }
 
@@ -149,7 +151,7 @@ html {
   position: absolute;
   left: 0;
   right: 100%;
-  bottom: -2px;
+  bottom: 0.55rem;
   height: 2px;
   background: #005828;
   transition: right 0.25s ease;
@@ -252,6 +254,8 @@ html {
 }
 
 .nav-link-mobile {
+  height: auto;
+  justify-content: center;
   font-size: 0.85rem;
   border-bottom: 1px solid rgba(0, 72, 24, 0.1);
 }
@@ -310,13 +314,39 @@ html {
   pointer-events: none;
 }
 
+.masonry-parallax {
+  background-color: #004818;
+  clip-path: inset(0);
+}
+
+.masonry-parallax::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: #004818 url("/Images/masonry-bg.webp") center / cover no-repeat;
+  pointer-events: none;
+}
+
 @media (max-width: 767px) {
+  /* clip-path: inset(0) is only needed to mask the *fixed* parallax photo.
+     On phones the photo is position:absolute and the clip is leftover —
+     iOS rounds it 1px short of the box, so the tan wall flashes through
+     as a hairline between this section and the solid block below. */
+  .foam-values,
+  .concrete-parallax,
+  .masonry-parallax {
+    clip-path: none;
+    margin-bottom: -2px;
+  }
+
   /* Small screens: the photo scrolls with the section. Don't `cover` the
      full (very tall) section — that zooms a 16:9 still until the foam is
      just a few giant cells. Size it like a viewport crop instead so the
      spray reads as a picture behind the heading. */
   .foam-values::before,
-  .concrete-parallax::before {
+  .concrete-parallax::before,
+  .masonry-parallax::before {
     position: absolute;
     top: 0;
     right: 0;

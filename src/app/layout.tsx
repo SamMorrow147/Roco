@@ -72,6 +72,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           as="image"
           fetchPriority="low"
         />
+        <link
+          rel="preload"
+          href="/Images/masonry-bg.webp"
+          as="image"
+          fetchPriority="low"
+        />
         {children}
       </body>
     </html>
