@@ -607,15 +607,14 @@ export function FoamExperience() {
             <p className="font-eurostile-black text-3xl tracking-[0.08em] text-[#005828] uppercase sm:text-4xl">
               We Do It Right.
             </p>
-            <p className="mt-4 text-[0.82rem] font-semibold tracking-[0.28em] text-[#004818] uppercase">
-              Spray Foam. Concrete. Masonry.
-            </p>
             <p className="mt-4 text-xl text-[#004818] sm:text-2xl">
               <span className="font-eurostile-black block">Built for Minnesota.</span>
               <span className="font-eurostile mt-1 block">Insulated for every season.</span>
             </p>
+            <p className="mt-4 text-[0.82rem] font-semibold tracking-[0.28em] text-[#004818] uppercase">
+              Spray Foam. Concrete. Masonry.
+            </p>
             <p className="mt-4 text-[0.9rem] font-semibold tracking-[0.22em] text-[#004818] uppercase">
-              Serving Central Minnesota |{" "}
               <a href="tel:3208088500" className="underline-offset-4 hover:underline">
                 320.808.8500
               </a>
@@ -674,7 +673,7 @@ export function FoamExperience() {
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-[#a2c88f]/50 bg-[#a2c88f]/15 text-white">
                   <ValuePropIcon icon={prop.icon} />
                 </div>
-                <h3 className="font-eurostile mt-5 text-xl tracking-[0.06em] text-white uppercase">
+                <h3 className="font-eurostile mt-5 text-center text-xl tracking-[0.06em] text-white uppercase sm:text-left">
                   {prop.title}
                 </h3>
                 <p className="mt-3 text-[0.95rem] font-medium leading-relaxed text-[#f4f1ea]">
