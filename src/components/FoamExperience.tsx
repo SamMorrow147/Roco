@@ -252,8 +252,7 @@ function applyReveal(progress: number, el: HTMLElement, start: number, span: num
 function applyLogoLift(progress: number, logo: HTMLElement) {
   const lift = gsap.utils.clamp(0, 1, (progress - 0.5) / 0.28);
   const eased = gsap.parseEase("power2.out")(lift);
-  logo.style.transform = `translateY(${-22 * eased}px) scale(${1 + 0.1 * eased}) rotateX(${16 * eased}deg)`;
-  logo.style.filter = `drop-shadow(0 ${18 * eased}px ${32 * eased}px rgba(0, 88, 40, ${0.45 * eased}))`;
+  logo.style.transform = `translateY(${-16 * eased}px) scale(${1 + 0.06 * eased})`;
 }
 
 export function FoamExperience() {
@@ -279,8 +278,6 @@ export function FoamExperience() {
       gsap.set(logoWrap, {
         opacity: 0,
         scale: 0.42,
-        rotateX: 40,
-        z: -200,
         transformOrigin: "50% 65%",
       });
     }
@@ -295,8 +292,6 @@ export function FoamExperience() {
       introTween = gsap.to(logoWrap, {
         opacity: 1,
         scale: 1,
-        rotateX: 0,
-        z: 0,
         duration: 1.05,
         ease: "power3.out",
         onComplete: markIntroDone,
@@ -508,7 +503,7 @@ export function FoamExperience() {
   }, [mobileOpen]);
 
   return (
-    <div id="top" className="relative min-h-dvh">
+    <div id="top" className="relative min-h-dvh overflow-x-clip">
       <FoamCanvas />
 
       {/* The nav lives OUTSIDE <main>: main is `relative z-10`, which makes
@@ -602,8 +597,8 @@ export function FoamExperience() {
                 width={1500}
                 height={725}
                 priority
-                sizes="(min-width: 640px) 34rem, 88vw"
-                className="mx-auto h-auto w-[min(88vw,34rem)]"
+                sizes="(min-width: 640px) 34rem, 100vw"
+                className="mx-auto h-auto w-full max-w-[34rem]"
               />
             </div>
           </div>

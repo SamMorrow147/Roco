@@ -110,7 +110,7 @@ export function FoamShaderLayer() {
   }, []);
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-0 h-dvh w-screen">
+    <div className="pointer-events-none fixed top-0 left-0 z-0 h-lvh w-full">
       <Canvas
         frameloop={active ? "always" : "never"}
         orthographic

@@ -31,6 +31,8 @@ html,
 body {
   color: var(--foreground);
   min-height: 100%;
+  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* The wall photo lives on its own position:fixed layer instead of using
@@ -43,8 +45,16 @@ body {
 body::before {
   content: "";
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
   z-index: -1;
+  /* Height is locked to the *large* viewport (lvh), not inset:0 / dvh.
+     Those shrink and grow with the mobile URL bar, and `background-size:
+     cover` then recrops — which reads as the wall zooming while you
+     scroll. 100vh is the fallback where lvh isn't supported. */
+  width: 100%;
+  height: 100vh;
+  height: 100lvh;
   background: #c9a876 url("/brand/wall-bg.webp") center / cover no-repeat;
   pointer-events: none;
 }
