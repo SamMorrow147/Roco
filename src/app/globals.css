@@ -82,7 +82,25 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Fixed site nav: transparent over the hero, frosted glass once scrolled. */
+.logo-stage {
+  perspective: 1100px;
+  perspective-origin: 50% 55%;
+}
+
+.hero-logo {
+  transform-origin: 50% 65%;
+  transform-style: preserve-3d;
+  will-change: transform, filter, opacity;
+}
+
+/* Fixed site nav: transparent over the hero, near-opaque cream once
+   scrolled. No backdrop-filter here — the nav sits above three fixed
+   compositor layers (the wall photo, the WebGL foam canvas, and the
+   clipped parallax photos), and a blurred backdrop above fixed layers
+   forces Chrome to re-rasterize the blur on every scroll frame, which
+   flickers the nav and the hero/logo scrolling beneath it. Same
+   constraint as the parallax sections below: translucency is fine,
+   blur is not. */
 .site-nav {
   transition:
     background-color 0.35s ease,
@@ -90,9 +108,7 @@ html {
 }
 
 .site-nav[data-scrolled="true"] {
-  background-color: rgba(244, 241, 234, 0.86);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  background-color: rgba(244, 241, 234, 0.94);
   box-shadow: 0 8px 28px rgba(0, 40, 16, 0.1);
 }
 
@@ -133,7 +149,108 @@ html {
   right: 0;
 }
 
-/* Parallax sections (foam values + concrete crew): each photo is a
+/* Active section (scroll-spy) gets the same sweep the hover state uses,
+   but it stays put instead of reversing when the pointer leaves. */
+.nav-link[data-active="true"] {
+  color: #005828;
+}
+
+.nav-link[data-active="true"]::after {
+  right: 0;
+}
+
+/* Hamburger button: three bars that morph into an X when the mobile menu
+   is open. Pure CSS, driven by the data-open attribute React sets. */
+.nav-burger-bars {
+  position: relative;
+  display: block;
+  width: 22px;
+  height: 16px;
+}
+
+.nav-burger-bars span {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 1px;
+  background: currentColor;
+  transition:
+    transform 0.25s ease,
+    opacity 0.2s ease,
+    top 0.25s ease;
+}
+
+.nav-burger-bars span:nth-child(1) {
+  top: 0;
+}
+
+.nav-burger-bars span:nth-child(2) {
+  top: 7px;
+}
+
+.nav-burger-bars span:nth-child(3) {
+  top: 14px;
+}
+
+.nav-burger-bars[data-open="true"] span:nth-child(1) {
+  top: 7px;
+  transform: rotate(45deg);
+}
+
+.nav-burger-bars[data-open="true"] span:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-burger-bars[data-open="true"] span:nth-child(3) {
+  top: 7px;
+  transform: rotate(-45deg);
+}
+
+/* Mobile dropdown panel: collapsed to zero height by default, and animated
+   open via grid-template-rows (rather than max-height) so it sizes exactly
+   to its content with no arbitrary ceiling. */
+.nav-mobile-menu {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 0.3s ease,
+    opacity 0.25s ease;
+}
+
+.nav-mobile-menu > div {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.nav-mobile-menu[data-open="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+/* Before the nav has picked up its scrolled background, the dropdown needs
+   its own — otherwise the link list would float unreadably over the hero
+   photo. Once .site-nav is scrolled, its own frosted background already
+   covers the (now taller) nav element, menu included. */
+.site-nav[data-scrolled="false"] .nav-mobile-menu[data-open="true"] {
+  /* Solid-ish cream, no backdrop blur — same fixed-layer flicker
+     constraint as .site-nav above. */
+  background-color: rgba(244, 241, 234, 0.97);
+  box-shadow: 0 8px 28px rgba(0, 40, 16, 0.12);
+  border-radius: 0 0 0.375rem 0.375rem;
+}
+
+.nav-link-mobile {
+  font-size: 0.85rem;
+  border-bottom: 1px solid rgba(0, 72, 24, 0.1);
+}
+
+.nav-link-mobile:last-of-type {
+  border-bottom: none;
+}
+
+/* Parallax sections (foam values + concrete & masonry): each photo is a
    position:fixed ::before layer — pinned to the viewport by the compositor,
    zero per-frame work — and clipped to its section with clip-path (which,
    unlike transform/filter, does NOT change the containing block of fixed
@@ -184,64 +301,115 @@ html {
 }
 
 @media (max-width: 767px) {
-  /* Small screens: let the photo scroll with its section. */
+  /* Small screens: the photo scrolls with the section. Don't `cover` the
+     full (very tall) section — that zooms a 16:9 still until the foam is
+     just a few giant cells. Size it like a viewport crop instead so the
+     spray reads as a picture behind the heading. */
   .foam-values::before,
   .concrete-parallax::before {
     position: absolute;
+    top: 0;
+    right: 0;
+    bottom: auto;
+    left: 0;
+    height: min(100vw, 70svh);
+    background-size: cover;
+    background-position: center;
   }
 }
 
-/* Concrete pour: tiled texture on the spreading fill layer. */
-.concrete-texture {
-  background-color: #c9c6bf;
-  background-image: url("/brand/concrete-tile.webp");
-  background-size: 480px 480px;
+/* ---- CMU block wall (Concrete & Masonry service cards) -----------------
+   The six service cards read as concrete blocks laid in two courses of
+   three. The 10px grid gaps are the mortar joints — each block carries a
+   5px mortar halo (box-shadow), so adjacent halos meet inside the gap and
+   mortar only exists around blocks that have been laid. It drops in with
+   each block during the lay-in animation. */
+.block-wall {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  padding: 5px; /* room for the outer mortar bed */
 }
 
-/* Concrete pour (top-down): the fill grows from a small glob into an
-   irregular puddle that covers the section — like watching concrete hit
-   the ground from above. FoamExperience computes two blob polygons every
-   animation frame (an outer "wet lip" and an inset surface) and drives
-   --pour-r for the sheen gradient below. --pour-cx/--pour-cy are the
-   glob's landing point and must match POUR_X / POUR_Y in the component. */
-.concrete-pour {
-  --pour-cx: 50%;
-  --pour-cy: 38%;
-  --pour-r: 0px;
+.cmu {
+  position: relative;
+  border-radius: 2px;
+  /* Light wash over the tile — thin enough that the cast texture reads
+     on every face, thick enough that the copy stays comfortable. */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(247, 245, 240, 0.62) 0%,
+      rgba(238, 235, 228, 0.5) 55%,
+      rgba(226, 222, 213, 0.58) 100%
+    ),
+    url("/brand/concrete-tile.webp");
+  background-size: auto, 480px 480px;
+  /* Face relief (inset highlights/shades), a soft cast shadow, then the
+     mortar halo painted last so it sits behind the rest. */
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -3px 0 rgba(46, 42, 36, 0.12),
+    inset 2px 0 0 rgba(255, 255, 255, 0.25),
+    inset -2px 0 0 rgba(46, 42, 36, 0.08),
+    0 2px 3px rgba(30, 28, 24, 0.22),
+    0 0 0 5px #9b968b;
+  /* Hover lift uses `translate` (not transform), so it can never fight
+     the GSAP transform that lays the block in. */
+  transition:
+    translate 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-/* The darker band of wet concrete piling up at the leading edge. It's the
-   sliver of this layer left showing around the inset surface blob. */
-.concrete-pour-rim {
-  background-color: #8a867e;
+.cmu:hover {
+  translate: 0 -3px;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -3px 0 rgba(46, 42, 36, 0.12),
+    inset 2px 0 0 rgba(255, 255, 255, 0.25),
+    inset -2px 0 0 rgba(46, 42, 36, 0.08),
+    0 8px 16px rgba(30, 28, 24, 0.24),
+    0 0 0 5px #9b968b;
 }
 
-/* Splatter drops flung ahead of the pour when the glob lands. Faded and
-   scaled in from JS; swallowed by the main mass as it spreads. */
-.concrete-splat {
+/* Cast-face detail: a faint inner outline, like a mold seam. */
+.cmu::after {
+  content: "";
   position: absolute;
-  background-color: #c2bfb8;
-  background-image: url("/brand/concrete-tile.webp");
-  background-size: 480px 480px;
-  border-radius: 58% 42% 63% 37% / 46% 58% 42% 54%;
-  box-shadow: inset 0 0 0 2px rgba(58, 56, 50, 0.18);
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(0.5);
+  inset: 8px;
+  border-radius: 2px;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(46, 42, 36, 0.07);
 }
 
-/* Wet sheen: a bright ring just inside the leading edge (freshest, most
-   water on top), fading to a duller tone toward the center — concrete
-   that was poured first and has had time to start setting. The gradient
-   is circular while the blob is not, but soft-light at these stops is
-   diffuse enough that the mismatch doesn't read. */
-.concrete-pour-sheen {
+@media (min-width: 640px) {
+  .block-wall {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Pre-animation state: each block waits well above its spot, then falls
+   in from the top. Applied from JS before first paint — never in the
+   markup — so without JS the wall is simply visible. */
+.block-wall[data-armed] .cmu {
+  opacity: 0;
+  transform: translateY(-140px);
+}
+
+/* Dust puff kicked out when a block lands. GSAP drives opacity/scale;
+   centering uses margins so the scale transform stays unencumbered. */
+.cmu-dust {
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  width: 110%;
+  height: 26px;
+  margin-left: -55%;
   background: radial-gradient(
-    circle at var(--pour-cx) var(--pour-cy),
-    rgba(0, 0, 0, 0.16) 0%,
-    rgba(0, 0, 0, 0.16) calc(max(0px, var(--pour-r) - 130px)),
-    rgba(255, 255, 255, 0.5) calc(max(0px, var(--pour-r) - 44px)),
-    rgba(255, 255, 255, 0.3) calc(max(0px, var(--pour-r) - 16px)),
-    rgba(0, 0, 0, 0.06) var(--pour-r)
+    ellipse at center,
+    rgba(120, 115, 105, 0.55),
+    rgba(120, 115, 105, 0) 70%
   );
-  mix-blend-mode: soft-light;
+  opacity: 0;
+  pointer-events: none;
 }
