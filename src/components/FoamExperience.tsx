@@ -322,6 +322,11 @@ function applyReveal(progress: number, el: HTMLElement, start: number, span: num
   el.style.transform = `translateY(${28 * (1 - eased)}px)`;
 }
 
+// Hero copy used to wait until the spray was ~3/4 done (~5s). Bring it
+// in as soon as foam starts so the phone and quote CTA are usable early.
+const COPY_REVEAL_START = 0.04;
+const COPY_REVEAL_SPAN = 0.2;
+
 function applyLogoLift(
   progress: number,
   logo: HTMLElement,
@@ -600,7 +605,14 @@ export function FoamExperience() {
         applyReveal(progress, navRef.current, 0.7, 0.14);
         if (progress >= 0.84) navRevealed = true;
       }
-      if (copyRef.current) applyReveal(progress, copyRef.current, 0.74, 0.16);
+      if (copyRef.current) {
+        applyReveal(
+          progress,
+          copyRef.current,
+          COPY_REVEAL_START,
+          COPY_REVEAL_SPAN,
+        );
+      }
 
       settledFrames = progress >= 1 ? settledFrames + 1 : 0;
       if (settledFrames > 2) {
@@ -625,7 +637,14 @@ export function FoamExperience() {
         window.cancelAnimationFrame(progressFrame);
         progressFrame = 0;
       }
-      if (copyRef.current) applyReveal(0, copyRef.current, 0.74, 0.16);
+      if (copyRef.current) {
+        applyReveal(
+          0,
+          copyRef.current,
+          COPY_REVEAL_START,
+          COPY_REVEAL_SPAN,
+        );
+      }
       if (logoImgRef.current) logoImgRef.current.style.filter = "none";
       startProgressLoop();
       if (!logoWrap || reduceMotion) {
