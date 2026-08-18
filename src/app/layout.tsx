@@ -26,11 +26,45 @@ const eurostile = localFont({
 });
 
 export const metadata: Metadata = {
+  // Base for resolving every relative URL below (canonicals, OG images).
+  metadataBase: new URL("https://www.rocofoam.com"),
   title: "RoCo Spray Foam Insulation",
   description:
     "Spray foam insulation, concrete, and masonry serving Central Minnesota.",
   icons: {
     icon: "/brand/favicon.png",
+  },
+  // "./" resolves to each page's own path — every route gets a correct
+  // self-referencing canonical without per-page boilerplate.
+  alternates: {
+    canonical: "./",
+  },
+  openGraph: {
+    siteName: "RoCo Spray Foam Insulation",
+    type: "website",
+    locale: "en_US",
+    images: [
+      {
+        url: "/brand/roco-logo.webp",
+        width: 1500,
+        height: 725,
+        alt: "RoCo Spray Foam Insulation",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
 };
 

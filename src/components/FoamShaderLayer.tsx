@@ -54,9 +54,12 @@ function FoamQuad() {
     const nowSec = performance.now() / 1000;
 
     let progress = 0;
-    if (startedRef.current) {
+    if (!foamProgress.introDone) {
+      startedRef.current = false;
+      warmupFramesRef.current = 0;
+    } else if (startedRef.current) {
       progress = advanceSpray(nowSec);
-    } else if (bgReady && foamProgress.introDone) {
+    } else if (bgReady) {
       warmupFramesRef.current += 1;
       if (warmupFramesRef.current >= 4) {
         startedRef.current = true;

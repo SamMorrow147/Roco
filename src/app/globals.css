@@ -83,6 +83,11 @@ body {
   font-weight: 700;
 }
 
+.font-eurostile-regular {
+  font-family: var(--font-eurostile), var(--font-oswald), sans-serif;
+  font-weight: 400;
+}
+
 .font-eurostile-black {
   font-family: var(--font-eurostile), var(--font-oswald), sans-serif;
   font-weight: 900;
@@ -101,6 +106,12 @@ html {
   transform-origin: 50% 65%;
   transform-style: preserve-3d;
   will-change: transform, filter, opacity;
+}
+
+/* Follows the logo's cut-out shape (not a rectangle). JS grows and
+   drops this shadow during the end-of-spray lift; this is the rest pose. */
+.hero-logo-mark {
+  filter: drop-shadow(0 4px 8px rgba(0, 32, 12, 0.22));
 }
 
 /* Fixed site nav: transparent over the hero, near-opaque cream once
@@ -166,6 +177,32 @@ html {
   right: 0;
 }
 
+/* Same sweep as .nav-link, sized for inline copy (hero trades, etc.). */
+.nav-link-inline {
+  position: relative;
+  display: inline-block;
+  transition: color 0.2s ease;
+}
+
+.nav-link-inline:hover {
+  color: #005828;
+}
+
+.nav-link-inline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: 0.08em;
+  height: 2px;
+  background: #005828;
+  transition: right 0.25s ease;
+}
+
+.nav-link-inline:hover::after {
+  right: 0;
+}
+
 /* Active section (scroll-spy) gets the same sweep the hover state uses,
    but it stays put instead of reversing when the pointer leaves. */
 .nav-link[data-active="true"] {
@@ -224,39 +261,101 @@ html {
   transform: rotate(-45deg);
 }
 
-/* Closed menu uses the HTML `hidden` attribute (display: none) so it
-   cannot leave a tall empty band under the logo + hamburger. */
+/* Fullscreen mobile nav: a fixed panel below the h-14 top row, filling
+   the rest of the viewport. Closed state is fully clipped + non-interactive
+   rather than display:none, so opening/closing can actually transition —
+   the spray wipe below needs a real "from" state to animate out of. */
 .nav-mobile-menu {
-  display: none;
+  position: fixed;
+  top: 3.5rem; /* matches the nav row's h-14 */
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  pointer-events: none;
 }
 
 .nav-mobile-menu[data-open="true"] {
-  display: block;
+  pointer-events: auto;
 }
 
-/* Before the nav has picked up its scrolled background, the dropdown needs
-   its own — otherwise the link list would float unreadably over the hero
-   photo. Once .site-nav is scrolled, its own frosted background already
-   covers the (now taller) nav element, menu included. */
-.site-nav[data-scrolled="false"] .nav-mobile-menu[data-open="true"] {
-  /* Solid-ish cream, no backdrop blur — same fixed-layer flicker
-     constraint as .site-nav above. */
-  background-color: rgba(244, 241, 234, 0.97);
-  box-shadow: 0 8px 28px rgba(0, 40, 16, 0.12);
-  border-radius: 0 0 0.375rem 0.375rem;
+/* Expanding cream panel. Height grows from the top. The spray band is
+   flipped and hung off the bottom of the tan fill so specks trail in
+   the direction of the wipe, same cream as the panel. */
+.nav-mobile-wipe {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 0;
+  overflow: hidden;
+  transition: height 0.62s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.nav-mobile-menu[data-open="true"] .nav-mobile-wipe {
+  height: 100%;
+}
+
+.nav-mobile-fill {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 56px;
+  left: 0;
+  display: block;
+  background-color: #f4f1ea;
+}
+
+.nav-mobile-wipe .spray-band {
+  height: 56px;
+  transform: scaleY(-1);
+}
+
+.nav-mobile-wipe .spray-band-fallback {
+  background: #f4f1ea;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-mobile-wipe {
+    transition: none;
+  }
+}
+
+/* Menu content fades/rises in once the fill has mostly swept past, rather
+   than appearing together with the panel. */
+.nav-mobile-menu-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.32s ease,
+    transform 0.32s ease;
+}
+
+.nav-mobile-menu[data-open="true"] .nav-mobile-menu-content {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.42s;
 }
 
 .nav-link-mobile {
   height: auto;
   width: fit-content;
   justify-content: center;
-  padding-block: 0.95rem;
-  font-size: 0.9rem;
+  padding-block: 1.1rem;
+  font-size: 1.7rem;
+  letter-spacing: 0.1em;
   line-height: 1.2;
 }
 
 .nav-link-mobile::after {
-  bottom: 0.55rem;
+  bottom: 0.7rem;
 }
 
 /* Parallax sections (foam values + concrete & masonry): each photo is a
@@ -284,6 +383,155 @@ html {
   z-index: -1;
   background: #00250f url("/Images/foam-bg.webp") center / cover no-repeat;
   pointer-events: none;
+}
+
+/* ---- Spray band (SprayFillBand.tsx) ------------------------------------
+   A canvas strip along the section's bottom edge: mint droplets sweep on
+   left-to-right, then every dot's radius grows per frame until the dots
+   merge and the rectangle is one solid filled stroke. All drawing happens
+   in the component — this CSS only places the box. The canvas boundary is
+   the sharp bounding box; nothing renders outside it. The fallback span
+   is the finished solid stroke for no-JS visitors, hidden once JS arms. */
+.spray-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 32px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+@media (min-width: 640px) {
+  .spray-band {
+    height: 44px;
+  }
+}
+
+/* Top variant: same band pinned to the section's top edge and flipped
+   vertically, so the dense merge line hugs the top stroke and the fine
+   specks trail downward. The flip transform mirrors the canvas drawing;
+   the sweep still reads left-to-right. */
+.spray-band--top {
+  top: 0;
+  bottom: auto;
+  transform: scaleY(-1);
+}
+
+.spray-band-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.spray-band-fallback {
+  position: absolute;
+  inset: 0;
+  background: #a2c88f;
+}
+
+.spray-band[data-armed] .spray-band-fallback {
+  display: none;
+}
+
+/* Buff variant never wants the solid mint fallback — the whole point
+   is a spray texture that polishes away to a sharp section join. */
+.spray-band[data-play="buff"] .spray-band-fallback {
+  display: none;
+}
+
+/* ---- Spray-fill hover (SprayHoverFill.tsx) -----------------------------
+   Same droplet-expansion effect at button scale: hovering sweeps mint
+   dots across the button and grows them until it's solid; leaving
+   reverses the fill. The canvas is clipped by the button's own rounded
+   corners (overflow hidden), and the label rides above it, flipping to
+   deep green as the foam fills. [data-spray-armed] is set by the
+   component only when JS runs and motion is allowed — otherwise the
+   button's ordinary CSS hover tint applies and the label keeps its
+   normal color. */
+.spray-hover-link {
+  position: relative;
+  overflow: hidden;
+}
+
+.spray-hover-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.spray-hover-label {
+  position: relative;
+  z-index: 1;
+  transition:
+    color 0.25s ease 0.18s,
+    font-weight 0.22s ease;
+}
+
+.spray-hover-link:hover .spray-hover-label,
+.spray-hover-link:focus-visible .spray-hover-label {
+  font-weight: 900;
+}
+
+.spray-hover-link[data-spray-armed]:hover .spray-hover-label,
+.spray-hover-link[data-spray-armed]:focus-visible .spray-hover-label {
+  color: #00250f;
+}
+
+/* Invert: pistachio button, cream foam. Type stays (or goes) dark green.
+   Keep the mint fill while the spray is armed so the cream droplets
+   read against it; without JS the whole button just goes cream. */
+.spray-hover-link--invert:hover,
+.spray-hover-link--invert:focus-visible {
+  background-color: #f4f1ea;
+  border-color: #a2c88f;
+  color: #00250f;
+}
+
+.spray-hover-link--invert[data-spray-armed]:hover,
+.spray-hover-link--invert[data-spray-armed]:focus-visible {
+  background-color: #a2c88f;
+  border-color: #a2c88f;
+}
+
+.spray-hover-link--invert[data-spray-armed]:hover .spray-hover-label,
+.spray-hover-link--invert[data-spray-armed]:focus-visible .spray-hover-label {
+  color: #00250f;
+}
+
+/* Simple solid-fill hover — deliberately NOT the spray/droplet effect
+   above (that texture is reserved for foam-related buttons). Just a flat
+   color layer that grows from the bottom edge up to the top, pure CSS,
+   no canvas. Used on the concrete & masonry button. */
+.fill-hover-link {
+  position: relative;
+  overflow: hidden;
+}
+
+.fill-hover-layer {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background-color: #ffffff;
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.32s ease;
+  pointer-events: none;
+}
+
+.fill-hover-link:hover .fill-hover-layer,
+.fill-hover-link:focus-visible .fill-hover-layer {
+  transform: scaleY(1);
+}
+
+.fill-hover-label {
+  position: relative;
+  z-index: 1;
 }
 
 /* Letter halo: contrast without a heavy wash over the foam photo.
@@ -328,7 +576,7 @@ html {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background: #004818 url("/Images/masonry-bg.webp") center / cover no-repeat;
+  background: #004818 url("/Images/masonry-bg.webp") center 22% / cover no-repeat;
   pointer-events: none;
 }
 
@@ -342,6 +590,10 @@ html {
   .masonry-parallax {
     clip-path: none;
     margin-bottom: -2px;
+  }
+
+  .foam-values {
+    overflow: hidden;
   }
 
   /* Small screens: the photo scrolls with the section. Don't `cover` the
@@ -360,14 +612,35 @@ html {
     background-size: cover;
     background-position: center;
   }
+
+  /* Concrete hero is taller (large logo + copy) — let the jobsite photo
+     fill the full section height instead of a short viewport crop. */
+  .concrete-parallax::before,
+  .masonry-parallax::before {
+    height: 100%;
+    min-height: 100%;
+  }
+
+  .masonry-parallax::before {
+    background-position: center 22%;
+  }
+
+  /* Foam photo: fill the whole section and crop in so the spray reads
+     larger on phones instead of sitting as a short strip over dark green. */
+  .foam-values::before {
+    height: 100%;
+    min-height: 100%;
+    background-size: cover;
+    background-position: center 42%;
+    transform: scale(1.32);
+    transform-origin: center 42%;
+  }
 }
 
 /* ---- CMU block wall (Concrete & Masonry service cards) -----------------
    The six service cards read as concrete blocks laid in two courses of
    three. The 10px grid gaps are the mortar joints — each block carries a
-   5px mortar halo (box-shadow), so adjacent halos meet inside the gap and
-   mortar only exists around blocks that have been laid. It drops in with
-   each block during the lay-in animation. */
+   5px mortar halo (box-shadow), so adjacent halos meet inside the gap. */
 .block-wall {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -378,26 +651,25 @@ html {
 .cmu {
   position: relative;
   border-radius: 2px;
-  /* Light wash over the tile — thin enough that the cast texture reads
-     on every face, thick enough that the copy stays comfortable. */
+  /* Cool grey wash over the tile — reads as poured concrete, not cream. */
   background:
     linear-gradient(
       180deg,
-      rgba(247, 245, 240, 0.62) 0%,
-      rgba(238, 235, 228, 0.5) 55%,
-      rgba(226, 222, 213, 0.58) 100%
+      rgba(214, 216, 218, 0.58) 0%,
+      rgba(196, 198, 201, 0.44) 55%,
+      rgba(178, 180, 184, 0.54) 100%
     ),
     url("/brand/concrete-tile.webp");
   background-size: auto, 480px 480px;
   /* Face relief (inset highlights/shades), a soft cast shadow, then the
      mortar halo painted last so it sits behind the rest. */
   box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 0.6),
-    inset 0 -3px 0 rgba(46, 42, 36, 0.12),
-    inset 2px 0 0 rgba(255, 255, 255, 0.25),
-    inset -2px 0 0 rgba(46, 42, 36, 0.08),
-    0 2px 3px rgba(30, 28, 24, 0.22),
-    0 0 0 5px #9b968b;
+    inset 0 2px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -3px 0 rgba(40, 42, 44, 0.14),
+    inset 2px 0 0 rgba(255, 255, 255, 0.18),
+    inset -2px 0 0 rgba(40, 42, 44, 0.1),
+    0 2px 3px rgba(30, 32, 34, 0.22),
+    0 0 0 5px #8d8f91;
   /* Hover lift uses `translate` (not transform), so it can never fight
      the GSAP transform that lays the block in. */
   transition:
@@ -408,12 +680,12 @@ html {
 .cmu:hover {
   translate: 0 -3px;
   box-shadow:
-    inset 0 2px 0 rgba(255, 255, 255, 0.6),
-    inset 0 -3px 0 rgba(46, 42, 36, 0.12),
-    inset 2px 0 0 rgba(255, 255, 255, 0.25),
-    inset -2px 0 0 rgba(46, 42, 36, 0.08),
-    0 8px 16px rgba(30, 28, 24, 0.24),
-    0 0 0 5px #9b968b;
+    inset 0 2px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -3px 0 rgba(40, 42, 44, 0.14),
+    inset 2px 0 0 rgba(255, 255, 255, 0.18),
+    inset -2px 0 0 rgba(40, 42, 44, 0.1),
+    0 8px 16px rgba(30, 32, 34, 0.24),
+    0 0 0 5px #8d8f91;
 }
 
 /* Cast-face detail: a faint inner outline, like a mold seam. */
@@ -423,7 +695,7 @@ html {
   inset: 8px;
   border-radius: 2px;
   pointer-events: none;
-  box-shadow: inset 0 0 0 1px rgba(46, 42, 36, 0.07);
+  box-shadow: inset 0 0 0 1px rgba(40, 42, 44, 0.1);
 }
 
 @media (min-width: 640px) {
@@ -432,28 +704,87 @@ html {
   }
 }
 
-/* Pre-animation state: each block waits well above its spot, then falls
-   in from the top. Applied from JS before first paint — never in the
-   markup — so without JS the wall is simply visible. */
+/* Pre-animation state: a short fade-up. Applied from JS before first
+   paint — never in the markup — so without JS the wall is simply visible. */
 .block-wall[data-armed] .cmu {
   opacity: 0;
-  transform: translateY(-140px);
 }
 
-/* Dust puff kicked out when a block lands. GSAP drives opacity/scale;
-   centering uses margins so the scale transform stays unencumbered. */
-.cmu-dust {
-  position: absolute;
-  left: 50%;
-  bottom: -8px;
-  width: 110%;
-  height: 26px;
-  margin-left: -55%;
-  background: radial-gradient(
-    ellipse at center,
-    rgba(120, 115, 105, 0.55),
-    rgba(120, 115, 105, 0) 70%
-  );
-  opacity: 0;
-  pointer-events: none;
+/* FAQ accordion: native <details>, so the answer is always in the HTML
+   (agents and no-JS readers still get the full Q&A). The chevron is the
+   only visual affordance for people. */
+.faq-item {
+  border: 1px solid rgba(0, 88, 40, 0.12);
+  border-radius: 0.375rem;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.faq-summary {
+  display: flex;
+  cursor: pointer;
+  list-style: none;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.15rem 1.25rem;
+}
+
+.faq-summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-summary::marker {
+  content: "";
+}
+
+.faq-chevron {
+  display: flex;
+  flex-shrink: 0;
+  color: #005828;
+  transition: transform 0.22s ease;
+}
+
+.faq-item[open] .faq-chevron {
+  transform: rotate(180deg);
+}
+
+.faq-answer {
+  padding: 0 1.25rem 1.25rem;
+  line-height: 1.7;
+  color: #1f2d23;
+}
+
+/* Value-card pistachio stroke: SVG rect with pathLength=1. JS arms the
+   hidden dash, then the reveal tween flips data-stroke-on so the line
+   draws from the top-left, clockwise around the box. No-JS / reduced
+   motion leave the stroke fully painted. */
+.value-card-stroke {
+  fill: none;
+  stroke: #a2c88f;
+  stroke-opacity: 0.75;
+  stroke-width: 1px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.value-card[data-stroke-armed] .value-card-stroke {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.value-card[data-stroke-on] .value-card-stroke {
+  animation: value-card-draw 1.15s ease-out forwards;
+}
+
+@keyframes value-card-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .value-card[data-stroke-armed] .value-card-stroke,
+  .value-card[data-stroke-on] .value-card-stroke {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
 }
