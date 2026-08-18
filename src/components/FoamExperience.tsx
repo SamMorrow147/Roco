@@ -807,7 +807,7 @@ export function FoamExperience() {
           id="top"
           className="flex flex-1 flex-col items-center justify-center px-6 pt-24 pb-24 text-center"
         >
-          <div className="logo-stage">
+          <div className="logo-stage w-[110%] sm:w-full sm:max-w-[34rem]">
             <div ref={logoLiftRef} className="hero-logo">
               <Image
                 ref={logoImgRef}
