@@ -27,7 +27,13 @@ const eurostile = localFont({
 
 export const metadata: Metadata = {
   // Base for resolving every relative URL below (canonicals, OG images).
-  metadataBase: new URL("https://www.rocofoam.com"),
+  // On Vercel, use this deployment's host so Facebook / iMessage fetch the
+  // logo from the same URL being shared (preview or production).
+  metadataBase: new URL(
+    process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "https://www.rocofoam.com",
+  ),
   title: "RoCo Spray Foam Insulation",
   description:
     "Spray foam insulation, concrete, and masonry serving Central Minnesota.",
@@ -43,14 +49,9 @@ export const metadata: Metadata = {
     siteName: "RoCo Spray Foam Insulation",
     type: "website",
     locale: "en_US",
-    images: [
-      {
-        url: "/brand/roco-logo.webp",
-        width: 1500,
-        height: 725,
-        alt: "RoCo Spray Foam Insulation",
-      },
-    ],
+    title: "RoCo Spray Foam Insulation",
+    description:
+      "Spray foam insulation, concrete, and masonry serving Central Minnesota.",
   },
   twitter: {
     card: "summary_large_image",
