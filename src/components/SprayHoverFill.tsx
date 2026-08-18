@@ -205,6 +205,10 @@ export function SprayHoverFill({
 
     const onResize = () => {
       if (W === 0) return; // not initialized yet — next hover sizes it
+      // Mobile browsers fire `resize` on ordinary scroll when the address
+      // bar collapses/expands (height-only, width untouched) — ignore
+      // that noise rather than rebuilding on every scroll tick.
+      if (host.clientWidth === W) return;
       sizeCanvas();
       makeDots();
       draw();

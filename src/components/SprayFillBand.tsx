@@ -282,6 +282,14 @@ export function SprayFillBand({
     io?.observe(wrap);
 
     const onResize = () => {
+      // Mobile browsers fire `resize` when the address bar collapses or
+      // expands during an ordinary scroll — a height-only change with the
+      // width untouched. This band only cares about width (it's a
+      // horizontal sweep), so treat a same-width resize as noise and skip
+      // it entirely; otherwise a live mid-scroll animation would get
+      // wiped and restarted by nothing more than normal scrolling, which
+      // is exactly what read as "glitchy" on phones.
+      if (wrap.clientWidth === W) return;
       if (done) {
         sizeCanvas();
         if (play === "buff") ctx.clearRect(0, 0, W, H);

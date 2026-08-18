@@ -788,3 +788,95 @@ html {
     animation: none;
   }
 }
+
+/* Quote page: cover the Jotform iframe until it reports loaded, so the
+   empty iframe box never sits on screen waiting for their CDN. */
+.jotform-embed-frame {
+  position: relative;
+  min-height: 539px;
+}
+
+.jotform-embed-frame iframe {
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.jotform-embed-frame[data-ready="true"] iframe {
+  opacity: 1;
+}
+
+.jotform-loader {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: #f4f1ea;
+  transition: opacity 0.35s ease;
+}
+
+.jotform-embed-frame[data-ready="true"] .jotform-loader {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.jotform-loader-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.jotform-loader-dots span {
+  display: block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background: #005828;
+  animation: jotform-foam 1s ease-in-out infinite;
+}
+
+.jotform-loader-dots span:nth-child(2) {
+  background: #a2c88f;
+  animation-delay: 0.16s;
+}
+
+.jotform-loader-dots span:nth-child(3) {
+  animation-delay: 0.32s;
+}
+
+.jotform-loader-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #004818;
+}
+
+@keyframes jotform-foam {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.55);
+    opacity: 0.35;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jotform-loader-dots span {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .jotform-embed-frame iframe,
+  .jotform-loader {
+    transition: none;
+  }
+}
