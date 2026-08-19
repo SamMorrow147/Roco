@@ -813,7 +813,7 @@ export function FoamExperience() {
             <a
               href={QUOTE_HREF}
               onClick={() => setMobileOpen(false)}
-              className="mt-6 inline-flex items-center justify-center rounded-sm bg-[#005828] px-10 py-5 text-center text-base tracking-[0.18em] text-white shadow-sm transition hover:bg-[#004818]"
+              className="font-eurostile-black mt-6 inline-flex items-center justify-center rounded-sm bg-[#005828] px-10 py-5 text-center text-base tracking-[0.18em] text-white uppercase shadow-sm transition hover:bg-[#004818]"
             >
               Request a quote
             </a>

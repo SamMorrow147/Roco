@@ -33,6 +33,14 @@ body {
   min-height: 100%;
   overflow-x: hidden;
   overflow-x: clip;
+  /* iOS Safari's rubber-band bounce at the top/bottom of the page reveals
+     a strip beyond the document's real edge. Because the wall photo below
+     is position:fixed (pinned to the viewport, not the document), WebKit's
+     well-known fixed-position-during-bounce glitch can redraw it into that
+     revealed strip — showing the OSB texture under the footer when someone
+     scrolls past the bottom on an iPhone. Turning off the bounce removes
+     the strip (and the glitch) entirely. */
+  overscroll-behavior-y: none;
 }
 
 /* The wall photo lives on its own position:fixed layer instead of using
@@ -349,9 +357,12 @@ html {
   width: fit-content;
   justify-content: center;
   padding-block: 1.1rem;
+  font-family: var(--font-eurostile), var(--font-oswald), sans-serif;
   font-size: 1.7rem;
+  font-weight: 900;
   letter-spacing: 0.1em;
   line-height: 1.2;
+  text-transform: uppercase;
 }
 
 .nav-link-mobile::after {
